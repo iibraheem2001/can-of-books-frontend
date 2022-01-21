@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import Button from 'bootstrap';
+import Button from 'react-bootstrap/Button';
 import LoginForm from './LoginForm';
 
 export default class LoginButton extends Component {
@@ -20,9 +20,9 @@ export default class LoginButton extends Component {
     return (
       <>
         {this.state.isClicked ?
-          <Button variant='primary' onClick={this.handleClick}>Log In</Button>
-          :
           <LoginForm />
+          :
+          <Button variant='primary' onClick={this.handleClick}>Log In</Button>
         }
       </>
     )

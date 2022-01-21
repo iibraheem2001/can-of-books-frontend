@@ -18,6 +18,9 @@ class Header extends React.Component {
             <LogoutButton onLogout={this.props.onLogout}/>
           </>
         )}
+        {!this.props.user && (
+          <NavItem><Link to="/login" className="nav-link">Log In</Link></NavItem>
+        )}
       </Navbar>
     )
   }

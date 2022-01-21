@@ -1,7 +1,6 @@
 import { Component } from "react";
-import Form from 'bootstrap';
-import FormGroup from "bootstrap";
-import Button from 'bootstrap';
+import { Form, FormGroup, Button } from 'react-bootstrap';
+
 
 class LoginForm extends Component {
 
