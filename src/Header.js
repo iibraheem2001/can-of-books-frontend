@@ -6,7 +6,6 @@ import LogoutButton from './LogoutButton';
 
 class Header extends React.Component {
   render() {
-    console.log('header', this.props.user);
     return (
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Navbar.Brand>My Books</Navbar.Brand>
