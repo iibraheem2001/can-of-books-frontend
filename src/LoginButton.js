@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import Button from 'bootstrap';
+import Button from 'react-bootstrap/Button';
 import LoginForm from './LoginForm';
 
 export default class LoginButton extends Component {
@@ -15,14 +15,12 @@ export default class LoginButton extends Component {
   }
 
   render() {
-
-    /* Render a button with label 'Log In'. When the button is clicked then show LoginForm instead */
     return (
       <>
         {this.state.isClicked ?
-          <Button variant='primary' onClick={this.handleClick}>Log In</Button>
+          <LoginForm loginHandler={this.props.loginHandler} />
           :
-          <LoginForm />
+          <Button variant='primary' onClick={this.handleClick} >Log In</Button>
         }
       </>
     )

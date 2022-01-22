@@ -10,10 +10,9 @@ class Login extends React.Component {
         <Card.Body>
           <Card.Title>Log In</Card.Title>
           <Card.Text>
-            Click Below to Log In
+            Log in to see your books
           </Card.Text>
-          {/* add a `LoginButton` component here that will log the user in */}
-          <LoginButton/>
+          <LoginButton loginHandler={this.props.loginHandler} />
         </Card.Body>
       </Card>
     )
