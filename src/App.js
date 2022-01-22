@@ -2,6 +2,7 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Login from './Login';
+import BestBooks from './BestBooks';
 import Profile from './Profile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
@@ -20,10 +21,11 @@ class App extends React.Component {
     }
   }
 
-  loginHandler = (user) => {
+  loginHandler = (userObj) => {
     this.setState({
-      user,
+      user: userObj
     })
+
   }
 
   logoutHandler = () => {
@@ -36,17 +38,16 @@ class App extends React.Component {
     return (
       <>
         <Router>
-          <Header user={this.state.user} onLogout={this.logoutHandler}/>
+          <Header user={this.state.user} onLogout={this.logoutHandler} />
           <Switch>
             <Route exact path="/">
-              {/* TODO: if the user is logged in, render the `BestBooks` component, if they are not, render the `Login` component */}
+              {this.state.user?.email && <BestBooks user={this.state.user} />}
             </Route>
-            {/* TODO: add a route with a path of '/profile' that renders a `Profile` component */}
             <Route exact path="/profile">
-              <Profile user={this.state.user}/>
+              <Profile user={this.state.user} />
             </Route>
             <Route exact path="/login">
-              <Login />
+              <Login loginHandler={this.loginHandler} />
             </Route>
           </Switch>
           <Footer />

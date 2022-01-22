@@ -1,24 +1,54 @@
 import { Component } from "react";
 import { Form, FormGroup, Button } from 'react-bootstrap';
+import { Redirect } from "react-router-dom";
+
 
 
 class LoginForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {
+        name: '',
+        email: ''
+      },
+      redirect: null
+    }
+  }
+
+  saveUserEmail = (event) => {
+    this.setState({ user: { ...this.state.user, email: event.target.value.toLowerCase() } })
+  }
+
+  saveUserName = (event) => {
+    this.setState({ user: { ...this.state.user, name: event.target.value } })
+  }
+
+
+  handleSubmit = () => {
+    this.props.loginHandler(this.state.user)
+    this.setState({ redirect: "/" });
+
+  }
 
   render() {
-    /* TODO: create a simple login form that collects username and and email, and lets parent component know when form has been submitted */
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />
+    }
     return (
-      <Form>
-        <FormGroup className="mb-3">
-          <Form.Label>Name</Form.Label>
-          <Form.Control type="name" placeholder="Enter name"></Form.Control>
-        </FormGroup>
-
-        <FormGroup className="mb-3">
-          <Form.Label>E-mail</Form.Label>
-          <Form.Control type="email" placeholder="Enter e-mail"></Form.Control>
-        </FormGroup>
-        <Button variant="primary" type="submit">Submit</Button>
-      </Form>
+      <>
+        <Form>
+          <FormGroup className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control onChange={this.saveUserName} type="name" required placeholder="Enter name"></Form.Control>
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <Form.Label>E-mail</Form.Label>
+            <Form.Control onChange={this.saveUserEmail} type="email" required placeholder="Enter e-mail"></Form.Control>
+          </FormGroup>
+          <Button onClick={this.handleSubmit} variant="primary">Submit</Button>
+        </Form>
+      </>
     );
   }
 };

@@ -15,14 +15,12 @@ export default class LoginButton extends Component {
   }
 
   render() {
-
-    /* Render a button with label 'Log In'. When the button is clicked then show LoginForm instead */
     return (
       <>
         {this.state.isClicked ?
-          <LoginForm />
+          <LoginForm loginHandler={this.props.loginHandler} />
           :
-          <Button variant='primary' onClick={this.handleClick}>Log In</Button>
+          <Button variant='primary' onClick={this.handleClick} >Log In</Button>
         }
       </>
     )

@@ -6,16 +6,15 @@ import LogoutButton from './LogoutButton';
 
 class Header extends React.Component {
   render() {
+    console.log('header', this.props.user);
     return (
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand>My Favorite Books</Navbar.Brand>
-        {this.props.user && (
+        <Navbar.Brand>My Books</Navbar.Brand>
+        {this.props.user?.email && (
           <>
             <NavItem><Link to="/" className="nav-link">Home</Link></NavItem>
             <NavItem><Link to='/profile' className="nav-link">Profile</Link></NavItem>
-            {/* TODO: if the user is logged in, render a navigation link to profile page */}
-            {/* TODO: if the user is logged in, render the `LogoutButton` */}
-            <LogoutButton onLogout={this.props.onLogout}/>
+            <LogoutButton onLogout={this.props.onLogout} />
           </>
         )}
         {!this.props.user && (
