@@ -13,6 +13,7 @@ class Header extends React.Component {
           <>
             <NavItem><Link to="/" className="nav-link">Home</Link></NavItem>
             <NavItem><Link to='/profile' className="nav-link">Profile</Link></NavItem>
+            <NavItem><Link to="/" onClick={this.props.showModal} className="nav-link">Add Book</Link></NavItem>
             <LogoutButton onLogout={this.props.onLogout} />
           </>
         )}
