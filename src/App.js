@@ -69,11 +69,13 @@ class App extends React.Component {
     console.log('delete book called');
     const url = `${SERVER}/books/${id}`;
     try {
-      await axios.delete(url);
-      const filteredBooks = this.state.books.filter(book => book._id !== id);
-      console.log(filteredBooks);
-      this.setState({ books: filteredBooks });
-      this.setAlert('Book successfully deleted', 'success')
+      const result = await axios.delete(url);
+      if (result.status === 202) {
+        const filteredBooks = this.state.books.filter(book => book._id !== id);
+        console.log(filteredBooks);
+        this.setState({ books: filteredBooks });
+        this.setAlert('Book successfully deleted', 'success')
+      }
     } catch (error) {
       console.log(error);
       this.setAlert('Unable to delete book', 'danger')
@@ -81,17 +83,18 @@ class App extends React.Component {
   }
   setAlert = (msg, type) => {
     this.setState({ alert: msg, alertType: type });
-    setInterval(() => this.setState({ alert: '', alertType: '' }), 4000)
+    setTimeout(() => this.setState({ alert: '', alertType: '' }), 4000)
   }
 
   render() {
+    console.log('app rendered');
     return (
       <>
         <Router>
           <Header user={this.state.user} onLogout={this.logoutHandler} showModal={this.showModal} />
           <Switch>
             <Route exact path="/">
-              {this.state.alert && <Alert style={{position: 'fixed', top: '56px', left: '0', width:'100%', textAlign: 'center'}}variant={this.state.alertType}>
+              {this.state.alert && <Alert style={{ position: 'fixed', top: '56px', left: '0', width: '100%', textAlign: 'center' }} variant={this.state.alertType}>
                 {this.state.alert}
               </Alert>}
               {this.state.user?.email && <BestBooks books={this.state.books} getBooks={this.getBooks} deleteBook={this.deleteBook} />}
