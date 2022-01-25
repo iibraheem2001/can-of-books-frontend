@@ -31,8 +31,7 @@ export default class AddBook extends Component {
   }
   
   render() {
-    return (
-
+    return (                                                                                  
       <Modal show={this.props.show} onHide={this.props.handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add Book</Modal.Title>

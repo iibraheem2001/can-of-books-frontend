@@ -41,11 +41,11 @@ class App extends React.Component {
   }
 
   showModal = () => {
-    this.setState({ modalIsShown: true })
+    this.setState({ modalIsShown: true });
   }
 
   hideModal = () => {
-    this.setState({ modalIsShown: false })
+    this.setState({ modalIsShown: false });
   }
 
 
@@ -56,38 +56,35 @@ class App extends React.Component {
       this.setState({ books: response.data });
     } catch (err) {
       console.log(err);
-      this.setAlert('Unable to get books', 'danger')
+      this.setAlert('Unable to get books', 'danger');
     }
   }
 
   addBook = (book) => {
-    this.setState({ books: [...this.state.books, book] })
-    this.setAlert('Book successfully added', 'success')
+    this.setState({ books: [...this.state.books, book] });
+    this.setAlert('Book successfully added', 'success');
   }
 
   deleteBook = async (id) => {
-    console.log('delete book called');
     const url = `${SERVER}/books/${id}`;
     try {
       const result = await axios.delete(url);
       if (result.status === 202) {
         const filteredBooks = this.state.books.filter(book => book._id !== id);
-        console.log(filteredBooks);
         this.setState({ books: filteredBooks });
-        this.setAlert('Book successfully deleted', 'success')
+        this.setAlert('Book successfully deleted', 'success');
       }
     } catch (error) {
       console.log(error);
-      this.setAlert('Unable to delete book', 'danger')
+      this.setAlert('Unable to delete book', 'danger');
     }
   }
   setAlert = (msg, type) => {
     this.setState({ alert: msg, alertType: type });
-    setTimeout(() => this.setState({ alert: '', alertType: '' }), 4000)
+    setTimeout(() => this.setState({ alert: '', alertType: '' }), 4000);                                                                                                                                 
   }
 
   render() {
-    console.log('app rendered');
     return (
       <>
         <Router>
