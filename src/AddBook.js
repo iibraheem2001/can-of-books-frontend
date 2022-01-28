@@ -15,7 +15,7 @@ export default class AddBook extends Component {
       title: event.target.title.value,
       description: event.target.description.value,
       status: event.target.status.value,
-      email: event.target.email.value
+      email: this.props.user?.email
     })
     this.props.handleClose();
   }
