@@ -22,6 +22,7 @@ class App extends React.Component {
     this.state = {
       user: null,
       books: [],
+      loading: true,
       alert: '',
       alertType: '',
       modalIsShown: false
@@ -51,8 +52,10 @@ class App extends React.Component {
 
   getBooks = async () => {
     let apiUrl = `${SERVER}/books?user=${this.state.user.email}`;
+    this.setState({ loading: true })
     try {
       const response = await axios.get(apiUrl);
+      this.setState({ loading: false });
       this.setState({ books: response.data });
     } catch (err) {
       console.log(err);
@@ -79,23 +82,60 @@ class App extends React.Component {
       this.setAlert('Unable to delete book', 'danger');
     }
   }
+
+  updateBook = async (bookToBeUpdated) => {
+    const url = `${SERVER}/books/${bookToBeUpdated._id}`;
+    try {
+      await axios.put(url, bookToBeUpdated);
+      const updatedBooks = this.state.books.map(currentBook => {
+        if (currentBook._id === bookToBeUpdated._id) {
+          return bookToBeUpdated;
+        } else {
+          return currentBook;
+        }
+      })
+      this.setState({ books: updatedBooks });
+      this.setAlert('Book successfully updated', 'success');
+    } catch (error) {
+      console.log(error);
+      this.setAlert('Unable to delete book', 'danger');
+    }
+  }
+
   setAlert = (msg, type) => {
     this.setState({ alert: msg, alertType: type });
-    setTimeout(() => this.setState({ alert: '', alertType: '' }), 4000);                                                                                                                                 
+    setTimeout(() => this.setState({ alert: '', alertType: '' }), 4000);
   }
 
   render() {
     return (
       <>
         <Router>
-          <Header user={this.state.user} onLogout={this.logoutHandler} showModal={this.showModal} />
+          <Header 
+          user={this.state.user} 
+          onLogout={this.logoutHandler} 
+          showModal={this.showModal} />
           <Switch>
             <Route exact path="/">
               {this.state.alert && <Alert style={{ position: 'fixed', top: '56px', left: '0', width: '100%', textAlign: 'center' }} variant={this.state.alertType}>
                 {this.state.alert}
               </Alert>}
-              {this.state.user?.email && <BestBooks books={this.state.books} getBooks={this.getBooks} deleteBook={this.deleteBook} />}
-              <AddBook show={this.state.modalIsShown} handleClose={this.hideModal} addBook={this.addBook} />
+              {this.state.user?.email &&
+                <BestBooks
+                  books={this.state.books}
+                  getBooks={this.getBooks}
+                  deleteBook={this.deleteBook}
+                  show={this.state.modalIsShown}
+                  showModal={this.showModal}
+                  handleClose={this.hideModal}
+                  updateBook={this.updateBook}
+                  loading={this.state.loading}
+                />}
+              <AddBook
+              user={this.state.user} 
+              show={this.state.modalIsShown} 
+              handleClose={this.hideModal} 
+              addBook={this.addBook} />
             </Route>
             <Route exact path="/profile">
               <Profile user={this.state.user} />
