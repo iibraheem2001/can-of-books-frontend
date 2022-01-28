@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import { Button, Container, Form, Modal } from 'react-bootstrap';
-import axios from 'axios';
-const SERVER = process.env.REACT_APP_SERVER;
 
 
 
-
-export default class AddBook extends Component {
- 
+export default class UpdateBook extends Component {
+  
 
   handleSubmit = (event) => {
     event.preventDefault();
-    this.onCreate({
+    this.props.updateBook({
+      _id: this.props.book._id,
       title: event.target.title.value,
       description: event.target.description.value,
       status: event.target.status.value,
@@ -20,44 +18,34 @@ export default class AddBook extends Component {
     this.props.handleClose();
   }
 
-   onCreate = async (newBook) => {
-    let apiUrl = `${SERVER}/books`;
-    try {
-      const response = await axios.post(apiUrl, newBook);
-      this.props.addBook(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  }
   
+
   render() {
-    return (                                                                                  
-      <Modal 
-      show={this.props.show} 
-      onHide={this.props.handleClose}>
+    return (
+      <Modal show={this.props.show} onHide={this.props.handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Book</Modal.Title>
+          <Modal.Title>Update Book</Modal.Title>
         </Modal.Header>
         <Modal.Body> <Container>
           <Form onSubmit={this.handleSubmit}>
             <Form.Group className="mb-3" controlId="title">
               <Form.Label>Title</Form.Label>
-              <Form.Control type="name" placeholder="Enter title" />
+              <Form.Control type="text" defaultValue={this.props.book?.title}  />
             </Form.Group>
             <Form.Group className="mb-3" controlId="description">
               <Form.Label>Description</Form.Label>
-              <Form.Control type="name" placeholder="Enter description" />
+              <Form.Control type="text" defaultValue={this.props.book?.description} />
             </Form.Group>
             <Form.Group className="mb-3" controlId="status">
               <Form.Label>Status</Form.Label>
-              <Form.Control type="name" placeholder="Enter status" />
+              <Form.Control type="text" defaultValue={this.props.book?.status}  />
             </Form.Group>
             <Form.Group className="mb-3" controlId="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="name" disabled placeholder={`${this.props.user?.email}`} />
+              <Form.Control disabled placeholder={`${this.props.book?.email}`} />
             </Form.Group>
             <Button variant="primary" type="submit">
-              Submit
+              Update
             </Button>
           </Form>
         </Container>
