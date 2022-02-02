@@ -13,7 +13,7 @@ export default class UpdateBook extends Component {
       title: event.target.title.value,
       description: event.target.description.value,
       status: event.target.status.value,
-      email: event.target.email.value
+      email: this.props.book?.email
     })
     this.props.handleClose();
   }

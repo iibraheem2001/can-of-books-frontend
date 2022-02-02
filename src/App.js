@@ -29,6 +29,7 @@ class App extends React.Component {
     }
   }
 
+
   loginHandler = (userObj) => {
     this.setState({
       user: userObj
@@ -108,6 +109,7 @@ class App extends React.Component {
   }
 
   render() {
+    console.log(this.state.books);
     return (
       <>
         <Router>
