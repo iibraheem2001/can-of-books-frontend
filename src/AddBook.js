@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Button, Container, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import { withAuth0 } from '@auth0/auth0-react';
 const SERVER = process.env.REACT_APP_SERVER;
 
 
 
 
-export default class AddBook extends Component {
- 
+class AddBook extends Component {
+
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -15,26 +16,34 @@ export default class AddBook extends Component {
       title: event.target.title.value,
       description: event.target.description.value,
       status: event.target.status.value,
-      email: this.props.user?.email
+      email: this.props.auth0.user?.email
     })
     this.props.handleClose();
   }
 
-   onCreate = async (newBook) => {
-    let apiUrl = `${SERVER}/books`;
+  onCreate = async (newBook) => {
+    const res = await this.props.auth0.getIdTokenClaims();
+    const jwt = res.__raw
+    const config = {
+      headers: { 'Authorization': `Bearer ${jwt}` },
+      method: 'post',
+      baseURL: SERVER,
+      url: '/books',
+      data: newBook
+    }
     try {
-      const response = await axios.post(apiUrl, newBook);
+      const response = await axios(config);
       this.props.addBook(response.data);
     } catch (err) {
       console.log(err);
     }
   }
-  
+
   render() {
-    return (                                                                                  
-      <Modal 
-      show={this.props.show} 
-      onHide={this.props.handleClose}>
+    return (
+      <Modal
+        show={this.props.show}
+        onHide={this.props.handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add Book</Modal.Title>
         </Modal.Header>
@@ -54,7 +63,7 @@ export default class AddBook extends Component {
             </Form.Group>
             <Form.Group className="mb-3" controlId="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="name" disabled placeholder={`${this.props.user?.email}`} />
+              <Form.Control type="name" disabled placeholder={`${this.props.auth0.user?.email}`} />
             </Form.Group>
             <Button variant="primary" type="submit">
               Submit
@@ -67,3 +76,4 @@ export default class AddBook extends Component {
   }
 }
 
+export default withAuth0(AddBook);

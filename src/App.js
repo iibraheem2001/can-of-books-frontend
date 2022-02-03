@@ -7,6 +7,7 @@ import BestBooks from './BestBooks';
 import Profile from './Profile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import { withAuth0 } from '@auth0/auth0-react';
 import { Alert } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
@@ -20,7 +21,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: null,
       books: [],
       loading: true,
       alert: '',
@@ -29,18 +29,13 @@ class App extends React.Component {
     }
   }
 
-
+ 
   loginHandler = (userObj) => {
     this.setState({
       user: userObj
     })
   }
 
-  logoutHandler = () => {
-    this.setState({
-      user: null,
-    })
-  }
 
   showModal = () => {
     this.setState({ modalIsShown: true });
@@ -52,15 +47,20 @@ class App extends React.Component {
 
 
   getBooks = async () => {
-    let apiUrl = `${SERVER}/books?user=${this.state.user.email}`;
-    this.setState({ loading: true })
-    try {
-      const response = await axios.get(apiUrl);
+    if (this.props.auth0.isAuthenticated) {
+      console.log(this.props.auth0);
+      this.setState({ loading: true })
+      const res = await this.props.auth0.getIdTokenClaims();
+      const jwt = res.__raw
+      const config = {
+        headers: {'Authorization': `Bearer ${jwt}`},
+        method: 'get',
+        baseURL: SERVER,
+        url: '/books'
+      }
+      const response = await axios(config);
+      this.setState({books: response.data})
       this.setState({ loading: false });
-      this.setState({ books: response.data });
-    } catch (err) {
-      console.log(err);
-      this.setAlert('Unable to get books', 'danger');
     }
   }
 
@@ -70,9 +70,16 @@ class App extends React.Component {
   }
 
   deleteBook = async (id) => {
-    const url = `${SERVER}/books/${id}`;
+    const res = await this.props.auth0.getIdTokenClaims();
+    const jwt = res.__raw
+    const config = {
+      headers: { 'Authorization': `Bearer ${jwt}` },
+      method: 'delete',
+      baseURL: SERVER,
+      url: `/books/${id}`
+    }
     try {
-      const result = await axios.delete(url);
+      const result = await axios(config);
       if (result.status === 202) {
         const filteredBooks = this.state.books.filter(book => book._id !== id);
         this.setState({ books: filteredBooks });
@@ -85,9 +92,17 @@ class App extends React.Component {
   }
 
   updateBook = async (bookToBeUpdated) => {
-    const url = `${SERVER}/books/${bookToBeUpdated._id}`;
+    const res = await this.props.auth0.getIdTokenClaims();
+    const jwt = res.__raw
+    const config = {
+      headers: { 'Authorization': `Bearer ${jwt}` },
+      method: 'put',
+      baseURL: SERVER,
+      url: `/books/${bookToBeUpdated._id}`,
+      data: bookToBeUpdated
+    }
     try {
-      await axios.put(url, bookToBeUpdated);
+      await axios(config);
       const updatedBooks = this.state.books.map(currentBook => {
         if (currentBook._id === bookToBeUpdated._id) {
           return bookToBeUpdated;
@@ -109,20 +124,19 @@ class App extends React.Component {
   }
 
   render() {
-    console.log(this.state.books);
     return (
       <>
         <Router>
-          <Header 
-          user={this.state.user} 
-          onLogout={this.logoutHandler} 
-          showModal={this.showModal} />
+          <Header
+            isAuthenticated={this.props.auth0.isAuthenticated}
+            onLogout={this.logoutHandler}
+            showModal={this.showModal} />
           <Switch>
             <Route exact path="/">
               {this.state.alert && <Alert style={{ position: 'fixed', top: '56px', left: '0', width: '100%', textAlign: 'center' }} variant={this.state.alertType}>
                 {this.state.alert}
               </Alert>}
-              {this.state.user?.email &&
+              {this.props.auth0.isAuthenticated &&
                 <BestBooks
                   books={this.state.books}
                   getBooks={this.getBooks}
@@ -134,16 +148,15 @@ class App extends React.Component {
                   loading={this.state.loading}
                 />}
               <AddBook
-              user={this.state.user} 
-              show={this.state.modalIsShown} 
-              handleClose={this.hideModal} 
-              addBook={this.addBook} />
+                show={this.state.modalIsShown}
+                handleClose={this.hideModal}
+                addBook={this.addBook} />
             </Route>
             <Route exact path="/profile">
-              <Profile user={this.state.user} />
+              <Profile isAuthenticated={this.props.auth0.isAuthenticated}/>
             </Route>
             <Route exact path="/login">
-              <Login loginHandler={this.loginHandler} />
+              <Login />
             </Route>
           </Switch>
           <Footer />
@@ -153,4 +166,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withAuth0(App);

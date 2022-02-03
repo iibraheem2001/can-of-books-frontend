@@ -1,6 +1,8 @@
 import React from 'react';
 import UpdateBook from './UpdateBook';
 import { Carousel, Image, Button, Spinner } from 'react-bootstrap';
+import { withAuth0 } from '@auth0/auth0-react';
+
 
 
 
@@ -37,22 +39,22 @@ class BestBooks extends React.Component {
 
   render() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '89vh' }}>
-        <h2>My Library</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <h2 style={{marginTop: '3rem'}}>My Library</h2>
         {this.props.loading ? <Spinner animation="border" role="status">
           <span className="visually-hidden"></span>
         </Spinner> :
           ((this.props.books.length > 0) ? (
             <>
-              <UpdateBook 
-              book={this.state.selectedBook} 
-              updateBook={this.props.updateBook} 
-              handleClose={this.closeUpdateModal} 
-              show={!!this.state.selectedBook} />
-              <Carousel 
-              activeIndex={this.state.activeIndex} 
-              onSelect={this.onSelect} 
-              style={{ maxWidth: '75vw', paddingTop: '4rem' }} interval={null}>
+              <UpdateBook
+                book={this.state.selectedBook}
+                updateBook={this.props.updateBook}
+                handleClose={this.closeUpdateModal}
+                show={!!this.state.selectedBook} />
+              <Carousel
+                activeIndex={this.state.activeIndex}
+                onSelect={this.onSelect}
+                style={{ maxWidth: '75vw', paddingTop: '4rem' }} interval={null}>
                 {this.props.books.map(book => (
                   <Carousel.Item key={book._id} >
                     <Button style={{ position: 'absolute', top: '20px', right: '20px', zIndex: '1000' }} onClick={() => this.handleDelete(book._id)} variant="danger">X</Button>
@@ -80,4 +82,4 @@ class BestBooks extends React.Component {
   }
 }
 
-export default BestBooks;
+export default withAuth0(BestBooks);
